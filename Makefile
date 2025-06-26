@@ -1,2 +1,2 @@
 all:
-	gcc main.c func.c -o walc -I/usr/include/spng -lspng
+	gcc main.c func.c -o walc -lm
