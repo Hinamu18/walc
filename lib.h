@@ -10,8 +10,6 @@
 
 #include "stb_image.h" // just include, no define
 
-// your other function declarations here
-
 typedef struct Pixel{
   uint8_t R;
   uint8_t B;
