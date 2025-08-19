@@ -7,4 +7,4 @@
 #include "stb_image.h"
 
 void pixel_colors(int width,int height,int channels,unsigned char *data);
-void sorting(char *buffer,FILE *colors);
+void sorting(char *buffer);

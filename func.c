@@ -1,51 +1,32 @@
 #include "lib.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void pixel_colors(int width, int height, int channels, unsigned char *data) {
   FILE *hex_file = fopen("./data/hex.txt", "wb");
-  int allP = width * height;
+  int allp = width * height;
 
-  // allocate enough memory to hold pixel data  
-  char *buffer = malloc(allP * channels * 3);
-  int index = 0;
-  char *ptr = buffer;
+  // * 2 = {R{2} G{2} B{2} if A{2}} 
+  int TheSize = allp * (channels * 2 + 1); // 1 = newline
   char hex[] = "0123456789ABCDEF";
-
-  for (int i = 0; i < width; i++) {
-    for (int k = 0; k < height; k++) {
-      index = (i * height + k) * channels;
-      if (channels == 3) {
-
-        *ptr++ = hex[data[i] >> 4];
-        *ptr++ = hex[data[i] & 0x0F];
-
-        *ptr++ = hex[data[i+1] >> 4];
-        *ptr++ = hex[data[i+1] & 0x0F];
-
-        *ptr++ = hex[data[i+2] >> 4];
-        *ptr++ = hex[data[i+2] & 0x0F];
-
-        *ptr++ = '\n';
-      } else if (channels == 4) {
-        *ptr++ = hex[data[i] >> 4];
-        *ptr++ = hex[data[i] & 0x0F];
-
-        *ptr++ = hex[data[i+1] >> 4];
-        *ptr++ = hex[data[i+1] & 0x0F];
-
-        *ptr++ = hex[data[i+2] >> 4];
-        *ptr++ = hex[data[i+2] & 0x0F];
-       
-        *ptr++ = hex[data[i+3] >> 4];
-        *ptr++ = hex[data[i+3] & 0x0F];
-        
-        *ptr++ = '\n';
-
-      }
+  char **thefull=malloc(TheSize/*how Many strings*/ * sizeof(char *)/*string*/);
+  char **fullp= thefull;
+  for (int i = 0; i < allp; i++) {
+    for (int k = 0; k < channels; k++) {
+       char hex_byte[3];
+      // shafted 4 bits so thats become a lower nibble 
+      // 0xF extract the lower nibble
+      hex_byte[0]= hex[(data[i * channels + k] >> 4) & 0xF];
+      // 0xF extract the lower nibble
+      hex_byte[1]= hex[data[i * channels + k] & 0xF];
+      hex_byte[2]= '\0';
+      
+      strcat(fullp[i], hex_byte);
     }
+    strcat(fullp[i], "\n");
   }
-  
+
   /*
   *ptr++ = data[index];
   *ptr++ = data[index + 1];
@@ -53,8 +34,12 @@ void pixel_colors(int width, int height, int channels, unsigned char *data) {
   *ptr++ = 255;
   */
 
-  fwrite(buffer, 1, ptr - buffer, hex_file);
-  free(buffer);
+
+  for (int i = 0; i < allp; i++) {
+    fputs(thefull[i], hex_file);
+    free(thefull[i]);
+  }
+  free(thefull);  
   fclose(hex_file);
 }
 
