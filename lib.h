@@ -7,4 +7,7 @@
 #include "stb_image.h"
 
 void pixel_colors(int width,int height,int channels,unsigned char *data);
-void sorting(char *buffer);
+
+int compareStrings(const void *a, const void *b);
+
+void sorting(char **buffer,int numPixels);
